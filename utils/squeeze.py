@@ -124,6 +124,7 @@ def opencv_wrapper(imgs, opencv_func, argv):
         imgs_copy = np.squeeze(imgs)
 
     for img in imgs_copy:
+        print(opencv_func, argv, img)
         img_uint8 = np.clip(np.rint(img * 255), 0, 255).astype(np.uint8)
         ret_img = opencv_func(*[img_uint8]+argv)
         if type(ret_img) == tuple:
@@ -179,13 +180,13 @@ def non_local_means_bw_tf(imgs, search_window, block_size, photo_render):
 
 def bilateral_filter_py(imgs, d, sigmaSpace, sigmaColor):
     """
-    :param d: Diameter of each pixel neighborhood that is used during filtering. 
+    :param d: Diameter of each pixel neighborhood that is used during filtering.
         If it is non-positive, it is computed from sigmaSpace.
-    :param sigmaSpace: Filter sigma in the coordinate space. 
-        A larger value of the parameter means that farther pixels will influence each other as long as their colors are close enough (see sigmaColor ). 
-        When d>0, it specifies the neighborhood size regardless of sigmaSpace. 
+    :param sigmaSpace: Filter sigma in the coordinate space.
+        A larger value of the parameter means that farther pixels will influence each other as long as their colors are close enough (see sigmaColor ).
+        When d>0, it specifies the neighborhood size regardless of sigmaSpace.
         Otherwise, d is proportional to sigmaSpace.
-    :param sigmaColor: Filter sigma in the color space. 
+    :param sigmaColor: Filter sigma in the color space.
         A larger value of the parameter means that farther colors within the pixel neighborhood (see sigmaSpace) will be mixed together, resulting in larger areas of semi-equal color.
     """
     import cv2

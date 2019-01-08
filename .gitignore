@@ -101,6 +101,9 @@ ENV/
 .mypy_cache/
 
 results*
+detection*.csv
+libcud*
+cifar-data*.gz
 
 # MacOS
 .DS_Store

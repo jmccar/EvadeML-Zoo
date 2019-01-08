@@ -1,8 +1,3 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
-
 import os
 import pdb
 import pickle
@@ -12,8 +7,10 @@ import random
 import keras
 import numpy as np
 import tensorflow as tf
+from IPython.display import display
 from tensorflow.python.platform import app
 from tensorflow.python.platform import flags
+
 
 FLAGS = flags.FLAGS
 
@@ -37,7 +34,6 @@ flags.DEFINE_boolean('detection_train_test_mode', True, 'Split into train/test d
 flags.DEFINE_string('result_folder', "results", 'The output folder for results.')
 flags.DEFINE_boolean('verbose', False, 'Stdout level. The hidden content will be saved to log files anyway.')
 
-FLAGS.model_name =FLAGS.model_name.lower()
 
 def load_tf_session():
     # Set TF random seed to improve reproducibility
@@ -50,10 +46,29 @@ def load_tf_session():
     return sess
 
 
-def main(argv=None):
+def main(dataset_name=None, model_name=None, attacks=None, nb_examples=None, detection=None, show_help=False):
     # 0. Select a dataset.
+    if show_help:
+        print(tf.flags.FLAGS.__dict__)
+        print("Some of the above operations are available via this function, namely: dataset_name, model_name, attacks, nb_examples and detetction. If you need more of these options, please install the parent repository and use it as a command line program.\n")
+        return
+
+
     from datasets import MNISTDataset, CIFAR10Dataset, ImageNetDataset, SVHNDataset
     from datasets import get_correct_prediction_idx, evaluate_adversarial_examples, calculate_mean_confidence, calculate_accuracy
+    from datasets.visualization import show_imgs_in_rows
+    if dataset_name is not None:
+        FLAGS.dataset_name = dataset_name
+    if attacks is not None:
+        FLAGS.attacks = attacks
+    if nb_examples is not None:
+        FLAGS.nb_examples = nb_examples
+    if detection is not None:
+        FLAGS.detection = detection
+    if model_name is not None:
+        FLAGS.model_name = model_name.lower()
+    else:
+        FLAGS.model_name = FLAGS.model_name.lower()
 
     if FLAGS.dataset_name == "MNIST":
         dataset = MNISTDataset()
@@ -63,6 +78,8 @@ def main(argv=None):
         dataset = ImageNetDataset()
     elif FLAGS.dataset_name == "SVHN":
         dataset = SVHNDataset()
+
+    print("Flags are %s" % tf.flags.FLAGS.__flags)
 
 
     # 1. Load a dataset.
@@ -175,7 +192,7 @@ def main(argv=None):
     X_test_adv_discretized_list = []
     Y_test_adv_discretized_pred_list = []
 
-    attack_string_list = filter(lambda x:len(x)>0, FLAGS.attacks.lower().split(';'))
+    attack_string_list = list(filter(lambda x:len(x)>0, FLAGS.attacks.lower().split(';')))
     to_csv = []
 
     X_adv_cache_folder = os.path.join(FLAGS.result_folder, 'adv_examples')
@@ -255,7 +272,7 @@ def main(argv=None):
 
 
     from utils.output import write_to_csv
-    attacks_evaluation_csv_fpath = os.path.join(FLAGS.result_folder, 
+    attacks_evaluation_csv_fpath = os.path.join(FLAGS.result_folder,
             "%s_attacks_%s_evaluation.csv" % \
             (task_id, attack_string_hash))
     fieldnames = ['dataset_name', 'model_name', 'attack_string', 'duration_per_sample', 'discretization', 'success_rate', 'mean_confidence', 'mean_l2_dist', 'mean_li_dist', 'mean_l0_dist_value', 'mean_l0_dist_pixel']
@@ -263,7 +280,6 @@ def main(argv=None):
 
 
     if FLAGS.visualize is True:
-        from datasets.visualization import show_imgs_in_rows
         if FLAGS.test_mode or FLAGS.balance_sampling:
             selected_idx_vis = range(Y_test.shape[1])
         else:
@@ -276,6 +292,7 @@ def main(argv=None):
 
         img_fpath = os.path.join(FLAGS.result_folder, '%s_attacks_%s_examples.png' % (task_id, attack_string_hash) )
         show_imgs_in_rows(rows, img_fpath)
+
         print ('\n===Adversarial image examples are saved in ', img_fpath)
 
         # TODO: output the prediction and confidence for each example, both legitimate and adversarial.
@@ -293,7 +310,7 @@ def main(argv=None):
         result_folder_robustness = os.path.join(FLAGS.result_folder, "robustness")
         fname_prefix = "%s_%s_robustness" % (task_id, attack_string_hash)
         evaluate_robustness(FLAGS.robustness, model, Y_test_all, X_test_all, Y_test, \
-                attack_string_list, X_test_adv_discretized_list, 
+                attack_string_list, X_test_adv_discretized_list,
                 fname_prefix, selected_idx_vis, result_folder_robustness)
 
 

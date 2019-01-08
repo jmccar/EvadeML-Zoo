@@ -2,7 +2,8 @@ from keras.datasets import mnist
 from keras.utils import np_utils
 
 import sys, os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+PARENT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(PARENT_DIR)
 
 from models.carlini_models import carlini_mnist_model
 from models.cleverhans_models import cleverhans_mnist_model
@@ -47,7 +48,7 @@ class MNISTDataset:
         self.model_name = model_name
 
         model_weights_fpath = "%s_%s.keras_weights.h5" % (self.dataset_name, model_name)
-        model_weights_fpath = os.path.join('downloads/trained_models', model_weights_fpath)
+        model_weights_fpath = os.path.join(PARENT_DIR, 'downloads/trained_models', model_weights_fpath)
 
         # self.maybe_download_model()
         if model_name in ["cleverhans", 'cleverhans_adv_trained']:

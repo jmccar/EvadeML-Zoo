@@ -1,5 +1,3 @@
-from future.standard_library import install_aliases
-install_aliases()
 from urllib import parse as urlparse
 
 import pickle

@@ -77,9 +77,9 @@ class FeatureSqueezingDetector:
         squeezers_name = params['squeezers'].split(',')
         self.set_config(layer_id, normalizer, metric, squeezers_name)
 
-        if params.has_key('threshold'):
+        if params.get('threshold'):
             self.threshold = float(params['threshold'])
-        else:
+        elif params.get('fpr'):
             self.threshold = None
             self.train_fpr = float(params['fpr'])
 
@@ -110,7 +110,7 @@ class FeatureSqueezingDetector:
         """
         Assume we have a perfeect feature squeezer that always recover a given adversariale example to the legitimate version.
         The distance of legitimate is zero then.
-        We want to find out which layer has the most different output between the adversarial and legitimate example pairs, 
+        We want to find out which layer has the most different output between the adversarial and legitimate example pairs,
             under several measurements.
         """
         model = self.model

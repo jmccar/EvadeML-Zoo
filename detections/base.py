@@ -1,8 +1,3 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
-
 import numpy as np
 import random
 import pdb
@@ -10,6 +5,7 @@ import sklearn
 import os
 
 from sklearn.metrics import roc_curve, auc
+from functools import reduce
 from .feature_squeezing import FeatureSqueezingDetector
 from .magnet_mnist import MagNetDetector as MagNetDetectorMNIST
 from .magnet_cifar import MagNetDetector as MagNetDetectorCIFAR
@@ -101,7 +97,7 @@ class DetectionEvaluator:
         else:
             print ("Preparing the detection dataset...")
 
-        # 1. Split Train and Test 
+        # 1. Split Train and Test
         random.seed(1234)
         length = len(X_detect)
         train_ratio = 0.5
@@ -277,6 +273,14 @@ class DetectionEvaluator:
                     X_sae, Y_sae = self.get_sae_data(attack_name)
                 Y_test_pred, Y_test_pred_score = detector.test(X_sae)
                 _, tpr, _, tp, ap = evalulate_detection_test(Y_sae, Y_test_pred)
+                undetected_idx = np.where(Y_test_pred==False)[0]
+                if len(undetected_idx):
+                    from datasets.visualization import show_imgs_in_rows
+                    undetected_X = [X_sae[undetected_idx]]
+                    img_fpath = os.path.join(FLAGS.result_folder, 'undetected_attacks__%s__%s.png' % (detector_name, attack_name))
+                    show_imgs_in_rows(undetected_X, img_fpath)
+                    print("%d new undetected images saved for attack %s: %s" % (len(undetected_X), attack_name, img_fpath))
+
                 print ("Detection rate on SAEs: %.4f \t %3d/%3d \t %s" % (tpr, tp, ap, attack_name))
                 overall_detection_rate_saes += tpr * len(Y_sae)
                 nb_saes += len(Y_sae)

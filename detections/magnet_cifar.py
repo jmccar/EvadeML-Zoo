@@ -16,7 +16,7 @@ project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_dir)
 
 from externals.MagNet.setup_cifar import CIFAR
-from externals.MagNet.utils import prepare_data
+from externals.MagNet.mag_utils import prepare_data
 from externals.MagNet.worker import AEDetector, DBDetector, SimpleReformer, IdReformer, AttackData, Classifier, Operator, Evaluator
 
 import numpy as np

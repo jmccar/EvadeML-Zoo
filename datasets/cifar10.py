@@ -1,5 +1,6 @@
 import sys, os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+PARENT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(PARENT_DIR)
 
 from utils import load_externals
 
@@ -50,7 +51,7 @@ class CIFAR10Dataset:
         self.model_name = model_name
 
         model_weights_fpath = "%s_%s.keras_weights.h5" % (self.dataset_name, model_name)
-        model_weights_fpath = os.path.join('downloads/trained_models', model_weights_fpath)
+        model_weights_fpath = os.path.join(PARENT_DIR, 'downloads/trained_models', model_weights_fpath)
 
         if model_name in ["cleverhans", 'cleverhans_adv_trained']:
             model = cleverhans_cifar10_model(logits=logits, input_range_type=input_range_type, pre_filter=pre_filter)

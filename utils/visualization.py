@@ -1,4 +1,6 @@
 import matplotlib.pyplot as plt
+from IPython.display import display
+
 def draw_plot(xs, series_list, label_list, fname):
     fig, ax = plt.subplots()
 

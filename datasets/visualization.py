@@ -1,10 +1,12 @@
 from PIL import Image
+from matplotlib.pyplot import imshow
 import numpy as np
 import pdb
+import sys
 
 def show_img(pixel_array, mode=None):
     img = Image.fromarray(pixel_array*255, mode=mode)
-    img.show()
+    display(img)
 
 
 def show_imgs_in_rows(rows, fpath=None):
@@ -40,4 +42,5 @@ def show_imgs_in_rows(rows, fpath=None):
 
     if fpath is not None:
         new_im.save(fpath)
-    new_im.show()
+    imshow(np.asarray(new_im))
+    #new_im.show()
