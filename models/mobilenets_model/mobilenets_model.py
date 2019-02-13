@@ -3,8 +3,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
 
 from utils import load_externals
 
-from mobilenets import *
-from mobilenets import _obtain_input_shape, __conv_block, __depthwise_conv_block
+from keras_applications.imagenet_utils import _obtain_input_shape
 
 from keras.layers import Lambda
 

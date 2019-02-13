@@ -33,11 +33,12 @@ def override_params(default, update):
 
 
 from cleverhans.attacks import FastGradientMethod
+from cleverhans.utils_keras import KerasModelWrapper
 def generate_fgsm_examples(sess, model, x, y, X, Y, attack_params, verbose, attack_log_fpath):
     """
     Untargeted attack. Y is not needed.
     """
-    fgsm = FastGradientMethod(model, back='tf', sess=sess)
+    fgsm = FastGradientMethod(KerasModelWrapper(model), back='tf', sess=sess)
     fgsm_params = {'eps': 0.1, 'ord': np.inf, 'y': None, 'clip_min': 0, 'clip_max': 1}
     fgsm_params = override_params(fgsm_params, attack_params)
 
@@ -50,10 +51,8 @@ def generate_bim_examples(sess, model, x, y, X, Y, attack_params, verbose, attac
     """
     Untargeted attack. Y is not needed.
     """
-    bim = BasicIterativeMethod(model, back='tf', sess=sess)
-    bim_params = {'eps': 0.1, 'eps_iter':0.05, 'nb_iter':10, 'y':y,
-                     'ord':np.inf, 'clip_min':0, 'clip_max':1 }
-    bim_params = override_params(bim_params, attack_params)
+    bim = BasicIterativeMethod(KerasModelWrapper(model), back='tf', sess=sess)
+    bim_params = {'eps': 0.1, 'eps_iter':0.05, 'nb_iter':10, 'clip_min':0, 'clip_max':1}
 
     X_adv = bim.generate_np(X, **bim_params)
     return X_adv
@@ -68,12 +67,10 @@ def generate_jsma_examples(sess, model, x, y, X, Y, attack_params, verbose, atta
 
     nb_classes = Y.shape[1]
 
-    jsma = SaliencyMapMethod(model, back='tf', sess=sess)
+    jsma = SaliencyMapMethod(KerasModelWrapper(model), back='tf', sess=sess)
     jsma_params = {'theta': 1., 'gamma': 0.1,
-                   'nb_classes': nb_classes, 'clip_min': 0.,
-                   'clip_max': 1., 'targets': y,
-                   'y_val': None}
-    jsma_params = override_params(jsma_params, attack_params)
+                   'clip_min': 0.,
+                   'clip_max': 1.}
 
     adv_x_list = []
 
@@ -84,7 +81,6 @@ def generate_jsma_examples(sess, model, x, y, X, Y, attack_params, verbose, atta
         for sample_ind in bar:
             sample = X[sample_ind:(sample_ind+1)]
 
-            jsma_params['y_val'] = Y_target[[sample_ind],]
             adv_x = jsma.generate_np(sample, **jsma_params)
             adv_x_list.append(adv_x)
 

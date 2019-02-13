@@ -1,4 +1,4 @@
-from keras.applications.imagenet_utils import _obtain_input_shape
+from keras_applications.imagenet_utils import _obtain_input_shape
 from keras.utils.data_utils import get_file
 import keras.backend as K
 from keras.layers import Input
@@ -13,21 +13,10 @@ import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils import load_externals
-from densenet import __transition_block, __dense_block, TF_WEIGHTS_PATH, TF_WEIGHTS_PATH_NO_TOP
+sys.path.append('externals/DenseNet')
+from densenet import DenseNet
 
 
-
-def get_densenet_weights_path(dataset_name="CIFAR-10", include_top=True):
-    assert dataset_name == "CIFAR-10"
-    if include_top:
-        weights_path = get_file('densenet_40_12_tf_dim_ordering_tf_kernels.h5',
-                                TF_WEIGHTS_PATH,
-                                cache_subdir='models')
-    else:
-        weights_path = get_file('densenet_40_12_tf_dim_ordering_tf_kernels_no_top.h5',
-                                TF_WEIGHTS_PATH_NO_TOP,
-                                cache_subdir='models')
-    return weights_path
 
 
 def densenet_cifar10_model(logits=False, input_range_type=1, pre_filter=lambda x:x):
@@ -110,6 +99,8 @@ def __create_dense_net(nb_classes, img_input, include_top, depth=40, nb_dense_bl
                 Note that if sigmoid is used, classes must be 1.
     Returns: keras tensor with nb_layers of conv_block appended
     '''
+    return densenet.DenseNet(img_input, classes=nb_classes, depth=depth, nb_dense_block=nb_dense_block,
+                          growth_rate=growth_rate, nb_filter=nb_filter, dropout_rate=dropout_rate, weights=None)
 
     concat_axis = 1 if K.image_data_format() == 'channels_first' else -1
 

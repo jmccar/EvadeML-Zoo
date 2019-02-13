@@ -10,8 +10,7 @@ from .feature_squeezing import FeatureSqueezingDetector
 from .magnet_mnist import MagNetDetector as MagNetDetectorMNIST
 from .magnet_cifar import MagNetDetector as MagNetDetectorCIFAR
 
-from tensorflow.python.platform import flags
-FLAGS = flags.FLAGS
+import tensorflow as tf
 from utils.output import write_to_csv
 
 def get_tpr_fpr(true_labels, pred_labels):
@@ -267,17 +266,18 @@ class DetectionEvaluator:
             for attack_name in self.attack_names:
                 # No adversarial examples for training for the current detection methods.
                 # X_sae, Y_sae = self.get_sae_testing_data(attack_name)
-                if FLAGS.detection_train_test_mode:
+                if tf.flags.FLAGS.detection_train_test_mode:
                     X_sae, Y_sae = self.get_sae_testing_data(attack_name)
                 else:
                     X_sae, Y_sae = self.get_sae_data(attack_name)
                 Y_test_pred, Y_test_pred_score = detector.test(X_sae)
                 _, tpr, _, tp, ap = evalulate_detection_test(Y_sae, Y_test_pred)
                 undetected_idx = np.where(Y_test_pred==False)[0]
+                print("%d undetected images" % len(undetected_idx))
                 if len(undetected_idx):
                     from datasets.visualization import show_imgs_in_rows
                     undetected_X = [X_sae[undetected_idx]]
-                    img_fpath = os.path.join(FLAGS.result_folder, 'undetected_attacks__%s__%s.png' % (detector_name, attack_name))
+                    img_fpath = os.path.join(tf.flags.FLAGS.result_folder, 'undetected_attacks__%s__%s.png' % (detector_name, attack_name))
                     show_imgs_in_rows(undetected_X, img_fpath)
                     print("%d new undetected images saved for attack %s: %s" % (len(undetected_X), attack_name, img_fpath))
 
@@ -294,7 +294,7 @@ class DetectionEvaluator:
             # No adversarial examples for training for the current detection methods.
             # X_sae_all, Y_sae_all = self.get_sae_testing_data()
             print ("### Excluding FAEs:")
-            if FLAGS.detection_train_test_mode:
+            if tf.flags.FLAGS.detection_train_test_mode:
                 X_nfae_all, Y_nfae_all = self.get_all_non_fae_testing_data()
             else:
                 X_nfae_all, Y_nfae_all = self.get_all_non_fae_data()
@@ -310,7 +310,7 @@ class DetectionEvaluator:
             print ("Overall TPR: %f\tROC-AUC: %f" % (tpr, roc_auc))
 
             # FAEs
-            if FLAGS.detection_train_test_mode:
+            if tf.flags.FLAGS.detection_train_test_mode:
                 X_fae, Y_fae = self.get_fae_testing_data()
             else:
                 X_fae, Y_fae = self.get_fae_data()

@@ -19,22 +19,8 @@ for lib_name, lib_path in external_libs.items():
         if not os.path.isfile(lib_token_fpath):
             open(lib_token_fpath, 'a').close()
 
-    if lib_name == 'Keras-deep-learning-models':
-        lib_token_fpath = os.path.join(lib_path, '__init__.py')
-        if not os.path.isfile(lib_token_fpath):
-            open(lib_token_fpath, 'a').close()
-
-    if lib_name == 'MobileNets':
-        lib_token_fpath = os.path.join(lib_path, '__init__.py')
-        if not os.path.isfile(lib_token_fpath):
-            open(lib_token_fpath, 'a').close()
 
     if lib_name == 'Deepfool/Universal':
-        lib_token_fpath = os.path.join(lib_path, '__init__.py')
-        if not os.path.isfile(lib_token_fpath):
-            open(lib_token_fpath, 'a').close()
-
-    if lib_name == 'DenseNet':
         lib_token_fpath = os.path.join(lib_path, '__init__.py')
         if not os.path.isfile(lib_token_fpath):
             open(lib_token_fpath, 'a').close()

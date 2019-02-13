@@ -16,7 +16,7 @@ project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_dir)
 
 from externals.MagNet.setup_mnist import MNIST
-from externals.MagNet.mag_utils import prepare_data
+from externals.MagNet.mn_utils import prepare_data
 from externals.MagNet.worker import AEDetector, SimpleReformer, IdReformer, AttackData, Classifier, Operator, Evaluator
 
 import numpy as np

@@ -3,12 +3,9 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
 
 import tensorflow as tf
 from utils import load_externals
-from resnet50 import *
 
-from keras.applications.imagenet_utils import _obtain_input_shape
+from keras_applications.imagenet_utils import _obtain_input_shape
 from keras.layers import Dense, Dropout, Activation, Flatten, Lambda
-
-from .keras_models import scaling_tf
 
 # Override the original definition
 def ResNet50(include_top=True, weights='imagenet',

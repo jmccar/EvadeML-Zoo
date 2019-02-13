@@ -7,9 +7,7 @@ import sys, os
 project_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_path)
 
-from tensorflow.python.platform import flags
-FLAGS = flags.FLAGS
-
+import tensorflow as tf
 from utils.parameter_parser import parse_params
 from externals.MagNet.worker import SimpleReformer
 
@@ -23,9 +21,9 @@ class MagNetRC:
         subject, params = parse_params(rc_name)
         assert subject == 'MagNet'
 
-        if FLAGS.dataset_name == "MNIST":
+        if tf.flags.FLAGS.dataset_name == "MNIST":
             self.reformer = SimpleReformer(mnist_autoencoder_fpath)
-        elif FLAGS.dataset_name == "CIFAR-10":
+        elif tf.flags.FLAGS.dataset_name == "CIFAR-10":
             self.reformer = SimpleReformer(cifar10_autoencoder_fpath)
 
         self.filter = lambda x: self.reformer.heal(x)
