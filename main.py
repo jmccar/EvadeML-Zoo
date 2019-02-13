@@ -169,7 +169,8 @@ def main(dataset_name=None, model_name=None, attacks=None, nb_examples=None, det
     task_id = "%s_%d_%s_%s" % \
             (task['dataset_name'], task['test_set_selected_length'], task['test_set_selected_idx_hash'][:5], task['model_name'])
 
-    tf.flags.FLAGS.result_folder = os.path.join(tf.flags.FLAGS.result_folder, task_id)
+    if task_id not in tf.flags.FLAGS.result_folder:
+        tf.flags.FLAGS.result_folder = os.path.join(tf.flags.FLAGS.result_folder, task_id)
     if not os.path.isdir(tf.flags.FLAGS.result_folder):
         os.makedirs(tf.flags.FLAGS.result_folder)
 
